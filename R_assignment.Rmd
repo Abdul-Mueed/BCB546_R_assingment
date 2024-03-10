@@ -1,0 +1,469 @@
+---
+title: "BCB 546 R assingment"
+author: "Abdul Mueed"
+date: "2024-03-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+snp_position<-read.csv(file = "snp_position.txt", header = T, sep = "\t")
+str(snp_position)
+```
+So snp_positions file has 15 columns and 983 rows. The first column name is SNP_ID. The columns (variables) contain either character strings or integers, there are no double precision numeric variables.
+```{r}
+genotypes<-read.csv(file = "fang_et_al_genotypes.txt", header = T, sep = "\t")
+str(genotypes)
+```
+The fang_et_al_genotypes file has 986 columns and 2782 rows. The first column name is SNP_ID. The columns (variables) all contain character strings, there are no double precision numeric or integer variables.
+```{r}
+library(tidyverse)
+```
+
+```{r}
+#reorder the columns of the snp_position dataframe
+reordered <- snp_position %>% relocate("cdv_marker_id", .after = "Position")
+trimmed <- reordered[,c(1,2,3)]
+
+#zmays
+zmays<-dplyr::filter(genotypes, Group %in% c("ZMMLR", "ZMMIL", "ZMMMR"))
+transposed_zmays<-t(zmays)
+transposed_zmays_df<-as.data.frame(transposed_zmays)
+cleaned_zmays<-tail(transposed_zmays_df, -3, header = F)
+SNP_ID<-rownames(cleaned_zmays)
+rownames(cleaned_zmays)<-NULL
+snp_id_added_zmays<-cbind(SNP_ID,cleaned_zmays)
+joined_zmays<-full_join(trimmed,snp_id_added_zmays, by = "SNP_ID")
+
+# teosinte
+teosinte<-dplyr::filter(genotypes, Group %in% c("ZMPBA", "ZMPIL", "ZMPJA"))
+transposed_teosinte<-t(teosinte)
+transposed_teosinte_df<-as.data.frame(transposed_teosinte)
+cleaned_teosinte<-tail(transposed_teosinte_df, -3, header = F)
+SNP_ID<-rownames(cleaned_teosinte)
+rownames(cleaned_teosinte)<-NULL
+snp_id_added_teosinte<-cbind(SNP_ID,cleaned_teosinte)
+joined_teosinte<-full_join(trimmed,snp_id_added_teosinte, by = "SNP_ID")
+```
+
+```{r}
+# split dataframes by chromosome number
+
+#zmays
+zmays_chrom1<-dplyr::filter(joined_zmays, Chromosome %in% "1")
+zmays_chrom2<-dplyr::filter(joined_zmays, Chromosome %in% "2")
+zmays_chrom3<-dplyr::filter(joined_zmays, Chromosome %in% "3")
+zmays_chrom4<-dplyr::filter(joined_zmays, Chromosome %in% "4")
+zmays_chrom5<-dplyr::filter(joined_zmays, Chromosome %in% "5")
+zmays_chrom6<-dplyr::filter(joined_zmays, Chromosome %in% "6")
+zmays_chrom7<-dplyr::filter(joined_zmays, Chromosome %in% "7")
+zmays_chrom8<-dplyr::filter(joined_zmays, Chromosome %in% "8")
+zmays_chrom9<-dplyr::filter(joined_zmays, Chromosome %in% "9")
+zmays_chrom10<-dplyr::filter(joined_zmays, Chromosome %in% "10")
+
+# teosinte
+teosinte_chrom1<-dplyr::filter(joined_teosinte, Chromosome %in% "1")
+teosinte_chrom2<-dplyr::filter(joined_teosinte, Chromosome %in% "2")
+teosinte_chrom3<-dplyr::filter(joined_teosinte, Chromosome %in% "3")
+teosinte_chrom4<-dplyr::filter(joined_teosinte, Chromosome %in% "4")
+teosinte_chrom5<-dplyr::filter(joined_teosinte, Chromosome %in% "5")
+teosinte_chrom6<-dplyr::filter(joined_teosinte, Chromosome %in% "6")
+teosinte_chrom7<-dplyr::filter(joined_teosinte, Chromosome %in% "7")
+teosinte_chrom8<-dplyr::filter(joined_teosinte, Chromosome %in% "8")
+teosinte_chrom9<-dplyr::filter(joined_teosinte, Chromosome %in% "9")
+teosinte_chrom10<-dplyr::filter(joined_teosinte, Chromosome %in% "10")
+
+```
+
+```{r, warning=FALSE, message=FALSE}
+# sort the files (zmays)
+
+# zmays by increasing position values and missing data encoded by "?"
+zmays_chrom1_increasing<-arrange(zmays_chrom1, as.numeric(Position))
+zmays_chrom2_increasing<-arrange(zmays_chrom2, as.numeric(Position))
+zmays_chrom3_increasing<-arrange(zmays_chrom3, as.numeric(Position))
+zmays_chrom4_increasing<-arrange(zmays_chrom4, as.numeric(Position))
+zmays_chrom5_increasing<-arrange(zmays_chrom5, as.numeric(Position))
+zmays_chrom6_increasing<-arrange(zmays_chrom6, as.numeric(Position))
+zmays_chrom7_increasing<-arrange(zmays_chrom7, as.numeric(Position))
+zmays_chrom8_increasing<-arrange(zmays_chrom8, as.numeric(Position))
+zmays_chrom9_increasing<-arrange(zmays_chrom9, as.numeric(Position))
+zmays_chrom10_increasing<-arrange(zmays_chrom10, as.numeric(Position))
+
+# save output to file
+
+write.csv(zmays_chrom1_increasing, "zmays_chrom1_increasing.csv", row.names = FALSE)
+write.csv(zmays_chrom2_increasing, "zmays_chrom2_increasing.csv", row.names = FALSE)
+write.csv(zmays_chrom3_increasing, "zmays_chrom3_increasing.csv", row.names = FALSE)
+write.csv(zmays_chrom4_increasing, "zmays_chrom4_increasing.csv", row.names = FALSE)
+write.csv(zmays_chrom5_increasing, "zmays_chrom5_increasing.csv", row.names = FALSE)
+write.csv(zmays_chrom6_increasing, "zmays_chrom6_increasing.csv", row.names = FALSE)
+write.csv(zmays_chrom7_increasing, "zmays_chrom7_increasing.csv", row.names = FALSE)
+write.csv(zmays_chrom8_increasing, "zmays_chrom8_increasing.csv", row.names = FALSE)
+write.csv(zmays_chrom9_increasing, "zmays_chrom9_increasing.csv", row.names = FALSE)
+write.csv(zmays_chrom10_increasing, "zmays_chrom10_increasing.csv", row.names = FALSE)
+
+
+# zmays by decreasing position values
+zmays_chrom1_decreasing<-arrange(zmays_chrom1, -as.numeric(Position))
+zmays_chrom2_decreasing<-arrange(zmays_chrom2, -as.numeric(Position))
+zmays_chrom3_decreasing<-arrange(zmays_chrom3, -as.numeric(Position))
+zmays_chrom4_decreasing<-arrange(zmays_chrom4, -as.numeric(Position))
+zmays_chrom5_decreasing<-arrange(zmays_chrom5, -as.numeric(Position))
+zmays_chrom6_decreasing<-arrange(zmays_chrom6, -as.numeric(Position))
+zmays_chrom7_decreasing<-arrange(zmays_chrom7, -as.numeric(Position))
+zmays_chrom8_decreasing<-arrange(zmays_chrom8, -as.numeric(Position))
+zmays_chrom9_decreasing<-arrange(zmays_chrom9, -as.numeric(Position))
+zmays_chrom10_decreasing<-arrange(zmays_chrom10, -as.numeric(Position))
+
+# substitute "?" with "-" for missing values
+library(dplyr)
+
+zmays_chrom1_decreasing_replaced <- zmays_chrom1_decreasing
+zmays_chrom1_decreasing_replaced[] <- lapply(zmays_chrom1_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+zmays_chrom2_decreasing_replaced <- zmays_chrom2_decreasing
+zmays_chrom2_decreasing_replaced[] <- lapply(zmays_chrom2_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+zmays_chrom3_decreasing_replaced <- zmays_chrom3_decreasing
+zmays_chrom3_decreasing_replaced[] <- lapply(zmays_chrom3_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+zmays_chrom4_decreasing_replaced <- zmays_chrom4_decreasing
+zmays_chrom4_decreasing_replaced[] <- lapply(zmays_chrom4_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+zmays_chrom5_decreasing_replaced <- zmays_chrom5_decreasing
+zmays_chrom5_decreasing_replaced[] <- lapply(zmays_chrom5_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+zmays_chrom6_decreasing_replaced <- zmays_chrom6_decreasing
+zmays_chrom6_decreasing_replaced[] <- lapply(zmays_chrom6_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+zmays_chrom7_decreasing_replaced <- zmays_chrom7_decreasing
+zmays_chrom7_decreasing_replaced[] <- lapply(zmays_chrom7_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+zmays_chrom8_decreasing_replaced <- zmays_chrom8_decreasing
+zmays_chrom8_decreasing_replaced[] <- lapply(zmays_chrom8_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+zmays_chrom9_decreasing_replaced <- zmays_chrom9_decreasing
+zmays_chrom9_decreasing_replaced[] <- lapply(zmays_chrom9_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+zmays_chrom10_decreasing_replaced <- zmays_chrom10_decreasing
+zmays_chrom10_decreasing_replaced[] <- lapply(zmays_chrom10_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+# save the output to file
+
+write.csv(zmays_chrom1_decreasing_replaced, "zmays_chrom1_decreasing_replaced.csv", row.names = FALSE)
+write.csv(zmays_chrom2_decreasing_replaced, "zmays_chrom2_decreasing_replaced.csv", row.names = FALSE)
+write.csv(zmays_chrom3_decreasing_replaced, "zmays_chrom3_decreasing_replaced.csv", row.names = FALSE)
+write.csv(zmays_chrom4_decreasing_replaced, "zmays_chrom4_decreasing_replaced.csv", row.names = FALSE)
+write.csv(zmays_chrom5_decreasing_replaced, "zmays_chrom5_decreasing_replaced.csv", row.names = FALSE)
+write.csv(zmays_chrom6_decreasing_replaced, "zmays_chrom6_decreasing_replaced.csv", row.names = FALSE)
+write.csv(zmays_chrom7_decreasing_replaced, "zmays_chrom7_decreasing_replaced.csv", row.names = FALSE)
+write.csv(zmays_chrom8_decreasing_replaced, "zmays_chrom8_decreasing_replaced.csv", row.names = FALSE)
+write.csv(zmays_chrom9_decreasing_replaced, "zmays_chrom9_decreasing_replaced.csv", row.names = FALSE)
+write.csv(zmays_chrom10_decreasing_replaced, "zmays_chrom10_decreasing_replaced.csv", row.names = FALSE)
+
+```
+
+
+
+```{r, warning=FALSE, message=FALSE}
+# sort the files (teosinte)
+
+# teosinte by increasing position values and missing data encoded by "?"
+teosinte_chrom1_increasing<-arrange(teosinte_chrom1, as.numeric(Position))
+teosinte_chrom2_increasing<-arrange(teosinte_chrom2, as.numeric(Position))
+teosinte_chrom3_increasing<-arrange(teosinte_chrom3, as.numeric(Position))
+teosinte_chrom4_increasing<-arrange(teosinte_chrom4, as.numeric(Position))
+teosinte_chrom5_increasing<-arrange(teosinte_chrom5, as.numeric(Position))
+teosinte_chrom6_increasing<-arrange(teosinte_chrom6, as.numeric(Position))
+teosinte_chrom7_increasing<-arrange(teosinte_chrom7, as.numeric(Position))
+teosinte_chrom8_increasing<-arrange(teosinte_chrom8, as.numeric(Position))
+teosinte_chrom9_increasing<-arrange(teosinte_chrom9, as.numeric(Position))
+teosinte_chrom10_increasing<-arrange(teosinte_chrom10, as.numeric(Position))
+
+# print files with the output
+write.csv(teosinte_chrom1_increasing, "teosinte_chrom1_increasing.csv", row.names = FALSE)
+write.csv(teosinte_chrom2_increasing, "teosinte_chrom2_increasing.csv", row.names = FALSE)
+write.csv(teosinte_chrom3_increasing, "teosinte_chrom3_increasing.csv", row.names = FALSE)
+write.csv(teosinte_chrom4_increasing, "teosinte_chrom4_increasing.csv", row.names = FALSE)
+write.csv(teosinte_chrom5_increasing, "teosinte_chrom5_increasing.csv", row.names = FALSE)
+write.csv(teosinte_chrom6_increasing, "teosinte_chrom6_increasing.csv", row.names = FALSE)
+write.csv(teosinte_chrom7_increasing, "teosinte_chrom7_increasing.csv", row.names = FALSE)
+write.csv(teosinte_chrom8_increasing, "teosinte_chrom8_increasing.csv", row.names = FALSE)
+write.csv(teosinte_chrom9_increasing, "teosinte_chrom9_increasing.csv", row.names = FALSE)
+write.csv(teosinte_chrom10_increasing, "teosinte_chrom10_increasing.csv", row.names = FALSE)
+
+
+# teosinte by decreasing position values
+teosinte_chrom1_decreasing<-arrange(teosinte_chrom1, -as.numeric(Position))
+teosinte_chrom2_decreasing<-arrange(teosinte_chrom2, -as.numeric(Position))
+teosinte_chrom3_decreasing<-arrange(teosinte_chrom3, -as.numeric(Position))
+teosinte_chrom4_decreasing<-arrange(teosinte_chrom4, -as.numeric(Position))
+teosinte_chrom5_decreasing<-arrange(teosinte_chrom5, -as.numeric(Position))
+teosinte_chrom6_decreasing<-arrange(teosinte_chrom6, -as.numeric(Position))
+teosinte_chrom7_decreasing<-arrange(teosinte_chrom7, -as.numeric(Position))
+teosinte_chrom8_decreasing<-arrange(teosinte_chrom8, -as.numeric(Position))
+teosinte_chrom9_decreasing<-arrange(teosinte_chrom9, -as.numeric(Position))
+teosinte_chrom10_decreasing<-arrange(teosinte_chrom10, -as.numeric(Position))
+
+# substitute "?" with "-" for missing values
+library(dplyr)
+
+teosinte_chrom1_decreasing_replaced <- teosinte_chrom1_decreasing
+teosinte_chrom1_decreasing_replaced[] <- lapply(teosinte_chrom1_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+teosinte_chrom2_decreasing_replaced <- teosinte_chrom2_decreasing
+teosinte_chrom2_decreasing_replaced[] <- lapply(teosinte_chrom2_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+teosinte_chrom3_decreasing_replaced <- teosinte_chrom3_decreasing
+teosinte_chrom3_decreasing_replaced[] <- lapply(teosinte_chrom3_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+teosinte_chrom4_decreasing_replaced <- teosinte_chrom4_decreasing
+teosinte_chrom4_decreasing_replaced[] <- lapply(teosinte_chrom4_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+teosinte_chrom5_decreasing_replaced <- teosinte_chrom5_decreasing
+teosinte_chrom5_decreasing_replaced[] <- lapply(teosinte_chrom5_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+teosinte_chrom6_decreasing_replaced <- teosinte_chrom6_decreasing
+teosinte_chrom6_decreasing_replaced[] <- lapply(teosinte_chrom6_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+teosinte_chrom7_decreasing_replaced <- teosinte_chrom7_decreasing
+teosinte_chrom7_decreasing_replaced[] <- lapply(teosinte_chrom7_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+teosinte_chrom8_decreasing_replaced <- teosinte_chrom8_decreasing
+teosinte_chrom8_decreasing_replaced[] <- lapply(teosinte_chrom8_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+teosinte_chrom9_decreasing_replaced <- teosinte_chrom9_decreasing
+teosinte_chrom9_decreasing_replaced[] <- lapply(teosinte_chrom9_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+teosinte_chrom10_decreasing_replaced <- teosinte_chrom10_decreasing
+teosinte_chrom10_decreasing_replaced[] <- lapply(teosinte_chrom10_decreasing_replaced, function(x) gsub("\\?", "-", x))
+
+# write the output to file
+
+write.csv(teosinte_chrom1_decreasing_replaced, "teosinte_chrom1_decreasing_replaced.csv", row.names = FALSE)
+write.csv(teosinte_chrom2_decreasing_replaced, "teosinte_chrom2_decreasing_replaced.csv", row.names = FALSE)
+write.csv(teosinte_chrom3_decreasing_replaced, "teosinte_chrom3_decreasing_replaced.csv", row.names = FALSE)
+write.csv(teosinte_chrom4_decreasing_replaced, "teosinte_chrom4_decreasing_replaced.csv", row.names = FALSE)
+write.csv(teosinte_chrom5_decreasing_replaced, "teosinte_chrom5_decreasing_replaced.csv", row.names = FALSE)
+write.csv(teosinte_chrom6_decreasing_replaced, "teosinte_chrom6_decreasing_replaced.csv", row.names = FALSE)
+write.csv(teosinte_chrom7_decreasing_replaced, "teosinte_chrom7_decreasing_replaced.csv", row.names = FALSE)
+write.csv(teosinte_chrom8_decreasing_replaced, "teosinte_chrom8_decreasing_replaced.csv", row.names = FALSE)
+write.csv(teosinte_chrom9_decreasing_replaced, "teosinte_chrom9_decreasing_replaced.csv", row.names = FALSE)
+write.csv(teosinte_chrom10_decreasing_replaced, "teosinte_chrom10_decreasing_replaced.csv", row.names = FALSE)
+
+
+```
+
+```{r}
+# Visualizatio part 1
+
+# create graphs for no. of snps per chromosome
+
+# zmays
+number_of_snps_per_chrom_zmays<-c(nrow(zmays_chrom1),nrow(zmays_chrom2),nrow(zmays_chrom3),nrow(zmays_chrom4),nrow(zmays_chrom5),nrow(zmays_chrom6),nrow(zmays_chrom7),nrow(zmays_chrom8),nrow(zmays_chrom9),nrow(zmays_chrom10))
+
+chromosome_number<-c("1","2","3","4","5","6","7","8","9","10")
+
+df_zmays<-as.data.frame(cbind(chromosome_number,number_of_snps_per_chrom_zmays))
+df_zmays
+
+# Ensure that the chromosome_number column is correctly formatted as a factor with the desired levels
+df_zmays$chromosome_number <- factor(df_zmays$chromosome_number, levels = as.character(1:10))
+
+ggplot(data = df_zmays, aes(x=as.factor(chromosome_number),y=number_of_snps_per_chrom_zmays)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  theme_minimal() +
+  labs(title = "Number of SNPs per Chromosome in Zmays",
+       x = "Chromosome Number",
+       y = "Number of SNPs")
+
+
+# teosinte
+number_of_snps_per_chrom_teosinte<-c(nrow(teosinte_chrom1),nrow(teosinte_chrom2),nrow(teosinte_chrom3),nrow(teosinte_chrom4),nrow(teosinte_chrom5),nrow(teosinte_chrom6),nrow(teosinte_chrom7),nrow(teosinte_chrom8),nrow(teosinte_chrom9),nrow(teosinte_chrom10))
+
+chromosome_number<-c("1","2","3","4","5","6","7","8","9","10")
+
+df_teosinte<-as.data.frame(cbind(chromosome_number,number_of_snps_per_chrom_teosinte))
+df_teosinte
+
+# Ensure that the chromosome_number column is correctly formatted as a factor with the desired levels
+df_teosinte$chromosome_number <- factor(df_teosinte$chromosome_number, levels = as.character(1:10))
+
+ggplot(data = df_teosinte, aes(x=as.factor(chromosome_number),y=number_of_snps_per_chrom_teosinte)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  theme_minimal() +
+  labs(title = "Number of SNPs per Chromosome in Teosinte",
+       x = "Chromosome Number",
+       y = "Number of SNPs")
+
+
+## there might be something wrong? Both zmays and teosinte have the same number of snps for each chromosome..?
+```
+
+
+
+```{r}
+# plot genotype distribution (homozygous/heterozygous/missing) by sample and group 
+
+# Load required libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Classification function
+classify_genotype <- function(genotype) {
+  if(grepl("^(A/C|A/G|A/T|C/A|C/G|C/T|G/A|G/C|G/T|T/A|T/C|T/G)$", genotype)) {
+    return("Heterozygous")
+  } else if(grepl("^(A/A|C/C|G/G|T/T)$", genotype)) {
+    return("Homozygous")
+  } else {
+    return("Missing")
+  }
+}
+
+# Initialize counts and apply classification
+genotypes$Homozygous <- 0
+genotypes$Heterozygous <- 0
+genotypes$Missing <- 0
+
+# apply classification function across genotype columns and calculate counts
+for (i in 4:ncol(genotypes)) { 
+  classifications <- sapply(genotypes[, i], classify_genotype)
+  genotypes$Homozygous <- genotypes$Homozygous + (classifications == "Homozygous")
+  genotypes$Heterozygous <- genotypes$Heterozygous + (classifications == "Heterozygous")
+  genotypes$Missing <- genotypes$Missing + (classifications == "Missing")
+}
+
+# Calculate percentages
+genotypes <- genotypes %>%
+  mutate(
+    PercentHomozygous = (Homozygous / (Homozygous + Heterozygous + Missing)) * 100,
+    PercentHeterozygous = (Heterozygous / (Homozygous + Heterozygous + Missing)) * 100,
+    PercentMissing = (Missing / (Homozygous + Heterozygous + Missing)) * 100
+  )
+
+# Convert the calculated percentages from wide to long format
+# ggplot2 prefers long format (skinny and long) to the short format for stacked bar plots
+# short format is when each column is considered an observation and long format is when each row is considered an observation
+# Since the percent homozygous, heterozygous, and missing in each row should add up to 100, in this dataframe, the data should be formatted in the long format to get a stacked bar that correctly adds up to 100
+genotypes_long <- genotypes %>%
+  select(Sample_ID, Group, PercentHomozygous, PercentHeterozygous, PercentMissing) %>%
+  pivot_longer(cols = starts_with("Percent"), names_to = "Category", values_to = "Percentage")
+
+# Visualization in long format using ggplot2
+
+# Stacked Bar Plot by Sample_ID
+# First, assign your plot to a variable
+ggplot(genotypes_long, aes(x = Sample_ID, y = Percentage, fill = Category)) +
+  geom_bar(stat = "identity", position = "stack") +
+  scale_fill_manual(values = c("PercentHomozygous" = "blue", "PercentHeterozygous" = "green", "PercentMissing" = "red")) +
+  labs(title = "Genotype Distribution by Sample", x = "Sample ID", y = "Percentage") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# save the output to file because the version displayed in here does not look nice
+genotype_bysample_plot<-ggplot(genotypes_long, aes(x = Sample_ID, y = Percentage, fill = Category)) +
+  geom_bar(stat = "identity", position = "stack") +
+  scale_fill_manual(values = c("PercentHomozygous" = "blue", "PercentHeterozygous" = "green", "PercentMissing" = "red")) +
+  labs(title = "Genotype Distribution by Sample", x = "Sample ID", y = "Percentage") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggsave("average_genotype_distribution_by_sample.png", genotype_bysample_plot, width = 16, height = 6, dpi = 600)
+
+
+# Group-Level Calculations and Visualization
+# Calculate average percentages for each genotype classification within each group
+group_avg <- genotypes_long %>%
+  # Group the data by 'Group' and 'Category' to prepare for aggregation
+  # 'Group' refers to the groupID for each sample
+  # 'Category' refers to the classification of the genotype (i.e. Homozygous, Heterozygous, Missing)
+  group_by(Group, Category) %>%
+  
+  # Calculate the average percentage of each 'Category' within each 'Group'
+  # 'mean(Percentage, na.rm = TRUE)' computes the mean while ignoring NA (missing) values
+  summarise(AvgPercentage = mean(Percentage, na.rm = TRUE)) %>%
+  
+  # Remove the grouping structure from the data frame
+  ungroup()
+
+
+# Create the group-level stacked bar plot
+ggplot(group_avg, aes(x = Group, y = AvgPercentage, fill = Category)) +
+  geom_bar(stat = "identity", position = "stack") +
+  scale_fill_manual(values = c("PercentHomozygous" = "blue", "PercentHeterozygous" = "green", "PercentMissing" = "red")) +
+  labs(title = "Average Genotype Distribution by Group", x = "Group", y = "Average Percentage") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+# Visualization part 3
+# plot genotype distribution (homozygous/heterozygous/missing) by chromosome number
+
+# Load required libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Classification function
+classify_genotype <- function(genotype) {
+  if(grepl("^(A/C|A/G|A/T|C/A|C/G|C/T|G/A|G/C|G/T|T/A|T/C|T/G)$", genotype)) {
+    return("Heterozygous")
+  } else if(grepl("^(A/A|C/C|G/G|T/T)$", genotype)) {
+    return("Homozygous")
+  } else {
+    return("Missing")
+  }
+}
+
+# Initialize counts and apply classification
+joined_teosinte$Homozygous <- 0
+joined_teosinte$Heterozygous <- 0
+joined_teosinte$Missing <- 0
+
+# apply classification function across genotype columns and calculate counts
+for (i in 4:ncol(joined_teosinte)) { 
+  classifications <- sapply(joined_teosinte[, i], classify_genotype)
+  joined_teosinte$Homozygous <- joined_teosinte$Homozygous + (classifications == "Homozygous")
+  joined_teosinte$Heterozygous <- joined_teosinte$Heterozygous + (classifications == "Heterozygous")
+  joined_teosinte$Missing <- joined_teosinte$Missing + (classifications == "Missing")
+}
+
+# Calculate percentages
+joined_teosinte <- joined_teosinte %>%
+  mutate(
+    PercentHomozygous = (Homozygous / (Homozygous + Heterozygous + Missing)) * 100,
+    PercentHeterozygous = (Heterozygous / (Homozygous + Heterozygous + Missing)) * 100,
+    PercentMissing = (Missing / (Homozygous + Heterozygous + Missing)) * 100
+  )
+
+# Convert the calculated percentages from wide to long format
+joined_teosinte_long <- joined_teosinte %>%
+  select(SNP_ID, Chromosome, PercentHomozygous, PercentHeterozygous, PercentMissing) %>%
+  pivot_longer(cols = starts_with("Percent"), names_to = "Category", values_to = "Percentage")
+
+# Visualization in long format using ggplot2
+
+# Group-Level Calculations and Visualization
+
+group_avg_teosinte <- joined_teosinte_long %>%
+  group_by(Chromosome, Category) %>%
+  summarise(AvgPercentage = mean(Percentage, na.rm = TRUE)) %>%
+  ungroup()
+
+
+# Create the group-level stacked bar plot
+ggplot(group_avg_teosinte, aes(x = Chromosome, y = AvgPercentage, fill = Category)) +
+  geom_bar(stat = "identity", position = "stack") +
+  scale_fill_manual(values = c("PercentHomozygous" = "blue", "PercentHeterozygous" = "green", "PercentMissing" = "red")) +
+  labs(title = "Average Genotype Distribution in Teosinte by Chromosome Number", x = "Group", y = "Average Percentage") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
